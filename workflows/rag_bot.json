@@ -1,0 +1,763 @@
+{
+  "name": "RAG Telegram Bot (template)",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "Ты консультант компании. Отвечаешь клиентам на вопросы о товарах, услугах, ценах и условиях работы.\n\nГЛАВНОЕ ПРАВИЛО: отвечай ТОЛЬКО на основе информации из базы знаний. Никогда не придумывай цены, условия, телефоны и другие факты.\n\nЕсли в базе знаний нет ответа — начни своё сообщение ровно с маркера [NO_ANSWER] и дальше напиши: Такой информации у меня нет, уточните у менеджера.\nМаркер [NO_ANSWER] ставится ТОЛЬКО в этом случае и только в самом начале.\n\nПосле каждого ответа записывай клиента в таблицу через соответствующий инструмент.\n\nСтиль:\n- Коротко и по делу\n- Вежливо, без лишних расшаркиваний\n- Если вопрос непонятен — уточни"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        800,
+        144
+      ],
+      "id": "074a0529-c939-4883-8ec8-6198d8eb80d5",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        352
+      ],
+      "id": "a06d9900-9bc9-4d22-936f-dde09c966474",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qKImxf14kT7XqTDY",
+          "name": "ernestzer01"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "База знаний компании: информация о товарах, услугах, ценах, условиях доставки и режиме работы.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "knowledge_base",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        336
+      ],
+      "id": "845a0be0-b0e0-4362-bcac-514d3c30ab94",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "nbEh9R6x3XP0ZclZ",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        480
+      ],
+      "id": "d2957f1e-eb63-4601-9650-44857619aa6d",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qKImxf14kT7XqTDY",
+          "name": "ernestzer01"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        112
+      ],
+      "id": "a63658a3-22bb-4e1d-92db-a0be07f678c8",
+      "name": "Telegram Trigger",
+      "webhookId": "9a217b4c-05db-46db-b4c1-557bb2c0622b",
+      "credentials": {
+        "telegramApi": {
+          "id": "asOaFwvgO6Mf1L94",
+          "name": "портфолио раг"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output.replace('[NO_ANSWER]', '').trim() || 'Такой информации у меня нет, уточните у менеджера.' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        176
+      ],
+      "id": "4ce969ee-7262-4b15-ba45-0b0c1ff5958a",
+      "name": "Send a text message",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "c75fcbed-a5a6-4713-aaaa-2db7d0909439",
+      "credentials": {
+        "telegramApi": {
+          "id": "asOaFwvgO6Mf1L94",
+          "name": "портфолио раг"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6aa45b96-ad67-4910-b1dd-b925638c477b",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        96
+      ],
+      "id": "2be81c95-d53b-4ca8-8f7d-27659953a13b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Извините, я понимаю только текстовые сообщения. Напишите ваш вопрос текстом.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        368
+      ],
+      "id": "22be42bf-f1ef-4c38-a971-49df15cdb497",
+      "name": "Send a text message1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "54a6bdef-9fc6-4e11-a7d4-8857f710b932",
+      "credentials": {
+        "telegramApi": {
+          "id": "asOaFwvgO6Mf1L94",
+          "name": "портфолио раг"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f77d685b-4934-4fc9-b292-7dbb73bbf818",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "[NO_ANSWER]",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1168,
+        144
+      ],
+      "id": "73489af2-c592-4e2d-902a-87da85dbdfb2",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_ADMIN_CHAT_ID",
+        "text": "=🔔 Бот не смог ответить.\n\nВопрос: {{ $('Telegram Trigger').item.json.message.text }}\nОт: {{ $('Telegram Trigger').item.json.message.from.first_name }} (chat_id: {{ $('Telegram Trigger').item.json.message.chat.id }})",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        16
+      ],
+      "id": "07e68196-d88d-447c-a869-255c4c1fa864",
+      "name": "Send a text message2",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "27efbebe-ab4f-4bf8-b747-29ef9f54d02f",
+      "credentials": {
+        "telegramApi": {
+          "id": "asOaFwvgO6Mf1L94",
+          "name": "портфолио раг"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1HUWdWkKQzYYQT78JZRUiN1whJNxcfBiQj08czJaeJV0",
+          "mode": "list",
+          "cachedResultName": "clients",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HUWdWkKQzYYQT78JZRUiN1whJNxcfBiQj08czJaeJV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HUWdWkKQzYYQT78JZRUiN1whJNxcfBiQj08czJaeJV0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', `Имя клиента`, 'string') }}",
+            "last_message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('last_message', `О чём спрашивал клиент, кратко`, 'string') }}",
+            "last_date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "reminded": "нет"
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_message",
+              "displayName": "last_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_date",
+              "displayName": "last_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminded",
+              "displayName": "reminded",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1200,
+        496
+      ],
+      "id": "62702c33-b4d8-4e8d-b527-56a4f51187ca",
+      "name": "Append or update row in sheet in Google Sheets",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Znhmh98sZ2Zh7MA5",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "c0476fd9-9d64-4345-ac3c-a45a0619ed45",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1904,
+        0
+      ],
+      "id": "a642ae62-85bb-4386-bd2a-97a729d4d071",
+      "name": "Get row(s) in sheet",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Znhmh98sZ2Zh7MA5",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "be30d479-1c20-4b7f-a228-4ff6d71d0f7e",
+              "leftValue": "={{ $json.reminded }}",
+              "rightValue": "да",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "7c1e4d02-0a4b-4f11-9d3e-1b2c3d4e5f60",
+              "leftValue": "={{ $json.last_date ? Math.floor($now.diff(DateTime.fromISO($json.last_date), 'days').days) : -1 }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2128,
+        0
+      ],
+      "id": "77dbf163-5745-40dc-9a24-5e710a1a1942",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=Здравствуйте, {{ $json.name }}! Вы интересовались: {{ $json.last_message }}. Вопрос ещё актуален? Будем рады помочь.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1984,
+        192
+      ],
+      "id": "2d8459fd-53be-4c93-a09c-30efd4d478ae",
+      "name": "Send a text message3",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "77f7ebcf-33dd-4d6a-be66-1884ad5d4874",
+      "credentials": {
+        "telegramApi": {
+          "id": "asOaFwvgO6Mf1L94",
+          "name": "портфолио раг"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $('Get row(s) in sheet').item.json.chat_id }}",
+            "reminded": "да"
+          },
+          "matchingColumns": [
+            "chat_id"
+          ],
+          "schema": [
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_message",
+              "displayName": "last_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_date",
+              "displayName": "last_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reminded",
+              "displayName": "reminded",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2208,
+        192
+      ],
+      "id": "66df8314-c0f2-45b6-9109-ec13a12f2c8a",
+      "name": "Append or update row in sheet",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Znhmh98sZ2Zh7MA5",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        352
+      ],
+      "id": "8cd91eeb-615d-4e68-8fe6-8efa5e2665bf",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message3": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bc7dfd66-ae74-436d-9826-21c0f02475b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "33ba4190c6d7271eacfc4b15d08c88208eb486ebf10e84d054010ebaebd63e2b"
+  },
+  "nodeGroups": [],
+  "id": "vNWUSHC1haKcs0ZC",
+  "tags": []
+}

@@ -1,0 +1,315 @@
+{
+  "name": "rag_web_chat",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi! 👋 I'm the virtual assistant of Maple Grove Family Dental.\nAsk me about insurance, prices, office hours or emergency visits.",
+        "options": {
+          "inputPlaceholder": "Type your question...",
+          "loadPreviousSession": "notSupported",
+          "subtitle": "AI assistant · Demo by Shumkar",
+          "title": "Maple Grove Family Dental",
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1312,
+        736
+      ],
+      "id": "92d4488d-8b26-4edc-b1b1-8109f41deab1",
+      "name": "When chat message received",
+      "webhookId": "7f3c2a10-5b6d-4e8f-a1b2-c3d4e5f6a7b8"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a customer support assistant for Maple Grove Family Dental, a dental clinic in Austin, Texas.\n\nMANDATORY: for EVERY customer question, first call the knowledge base tool to search for the answer. Never answer and never say you don't know before searching.\n\nAnswer ONLY using information returned by the knowledge base. Never invent prices, insurance plans, hours, phone numbers or any other facts.\n\nLANGUAGE: always reply in the same language the customer writes in.\n\nIf the knowledge base search returned nothing relevant, start your message exactly with the marker [NO_ANSWER], then say that you don't have this information and a manager will follow up.\nUse the [NO_ANSWER] marker ONLY in that case and only at the very beginning.\n\nStyle:\n- Short, friendly and to the point\n- If the question is unclear, ask a clarifying question"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1664,
+        752
+      ],
+      "id": "ef36f594-459e-42aa-a2c2-c35ad753d57f",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        976
+      ],
+      "id": "0739d5d2-f406-47d8-9d9e-4937fc367d7e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qKImxf14kT7XqTDY",
+          "name": "ernestzer01"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        976
+      ],
+      "id": "17a3c822-6d54-4855-8ece-07b1e98c423e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Knowledge base of the clinic: services, prices, insurance plans, office hours, emergency and payment policies.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "dental_demo",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1840,
+        976
+      ],
+      "id": "8c17b9be-bd89-46df-963f-da2897b5a066",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "nbEh9R6x3XP0ZclZ",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        1136
+      ],
+      "id": "0c6f9b31-a092-4342-9a70-6c1607d5ada9",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qKImxf14kT7XqTDY",
+          "name": "ernestzer01"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f77d685b-4934-4fc9-b292-7dbb73bbf818",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "[NO_ANSWER]",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2016,
+        752
+      ],
+      "id": "fa48e822-0b6d-4f69-b022-427f3bf208a6",
+      "name": "No answer?"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_ADMIN_CHAT_ID",
+        "text": "=🔔 Web demo: bot could not answer.\n\nQuestion: {{ $('When chat message received').item.json.chatInput }}\nSession: {{ $('When chat message received').item.json.sessionId }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2224,
+        640
+      ],
+      "id": "c10ed369-42c1-4ec5-9905-aa66cb38f28d",
+      "name": "Notify admin",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "90362fc0-bac3-4b34-81ac-d40a611cb2f1",
+      "credentials": {
+        "telegramApi": {
+          "id": "asOaFwvgO6Mf1L94",
+          "name": "портфолио раг"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1b2c3d4-0000-4000-8000-000000000001",
+              "name": "output",
+              "value": "={{ $('AI Agent').item.json.output.replace('[NO_ANSWER]', '').trim() || \"I don't have this information yet. A manager will follow up with you.\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2448,
+        752
+      ],
+      "id": "f4741dd4-4579-498b-bc9b-5559095535b6",
+      "name": "Clean answer"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "No answer?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No answer?": {
+      "main": [
+        [
+          {
+            "node": "Notify admin",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify admin": {
+      "main": [
+        [
+          {
+            "node": "Clean answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "tags": []
+}

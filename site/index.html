@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maple Grove Family Dental — Austin, TX</title>
+<meta name="description" content="Family, cosmetic and emergency dentistry in South Austin. In network with Delta Dental, Cigna, Aetna, MetLife and more.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230F7C80'/><path d='M10 9c-2.5 0-4 2-4 5 0 4 2 10 4 10 1.6 0 1.8-5 3-5s1.4 5 3 5c2 0 4-6 4-10 0-3-1.5-5-4-5-1.2 0-1.8.6-3 .6S11.2 9 10 9z' transform='translate(3 0)' fill='white'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E3B43; --ink-soft:#4A6A70; --teal:#0F7C80; --teal-dark:#0A5F63;
+  --mist:#EEF6F5; --aqua:#CDE9E6; --line:#D9E6E4; --white:#fff; --sun:#F4C95D;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --wrap:1120px;
+  /* n8n chat widget theme */
+  --chat--color-primary:#0F7C80; --chat--color-primary-shade-50:#0A5F63; --chat--color-primary-shade-100:#084b4e;
+  --chat--color-secondary:#0F7C80; --chat--color-secondary-shade-50:#0A5F63;
+  --chat--color-white:#fff; --chat--color-light:#F4F9F8; --chat--color-dark:#0E3B43;
+  --chat--header--background:#0E3B43; --chat--header--color:#fff;
+  --chat--toggle--background:#0F7C80; --chat--toggle--hover--background:#0A5F63; --chat--toggle--active--background:#084b4e;
+  --chat--message--bot--background:#fff; --chat--message--bot--color:#0E3B43;
+  --chat--message--user--background:#0F7C80; --chat--message--user--color:#fff;
+  --chat--window--width:380px; --chat--window--height:560px;
+  --chat--font-family:"Figtree", system-ui, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font-family:var(--body);color:var(--ink);background:var(--white);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;line-height:1.1}
+
+/* demo ribbon */
+.demo{background:var(--ink);color:#DDEFEE;font-size:14px;text-align:center;padding:8px 16px}
+.demo button{background:none;border:0;color:var(--sun);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;padding:0}
+
+/* header */
+header{border-bottom:1px solid var(--line);background:var(--white);position:sticky;top:0;z-index:20}
+.nav{display:flex;align-items:center;justify-content:space-between;height:72px;gap:24px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-0.01em}
+.brand svg{flex:none}
+.nav ul{display:flex;gap:28px;list-style:none;font-weight:500;font-size:15px}
+.nav ul a{text-decoration:none;color:var(--ink-soft)}
+.nav ul a:hover{color:var(--ink)}
+.brand{white-space:nowrap}
+.phone{font-weight:600;text-decoration:none;white-space:nowrap}
+@media (max-width:480px){.brand{font-size:17px}.brand svg{width:28px;height:28px}.phone{display:none}}
+@media (max-width:860px){.nav ul{display:none}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 26px;border-radius:26px;font:600 16px var(--body);text-decoration:none;cursor:pointer;border:2px solid transparent;transition:background .15s,color .15s,border-color .15s}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover{background:var(--teal-dark)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:#fff}
+
+/* hero */
+.hero{background:var(--mist);padding:72px 0 88px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(40px,5.6vw,68px);max-width:12ch}
+.hero p.lead{font-size:19px;color:var(--ink-soft);max-width:46ch;margin:22px 0 32px}
+.hero .ctas{display:flex;gap:14px;flex-wrap:wrap}
+.langs{margin-top:28px;font-size:15px;color:var(--ink-soft)}
+.shot{border-radius:20px;overflow:hidden;background:var(--aqua);margin-bottom:18px;aspect-ratio:4/3}
+.shot img{width:100%;height:100%;object-fit:cover;display:block}
+.doc .photo{width:100%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;margin-bottom:18px;background:var(--aqua)}
+.doc .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.office{border-radius:24px;overflow:hidden;margin-top:48px;aspect-ratio:21/9;background:var(--aqua)}
+.office img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:800px){.office{aspect-ratio:16/10}}
+.today{background:var(--white);border-radius:20px;padding:28px;border:1px solid var(--line)}
+.status{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.dot{width:10px;height:10px;border-radius:50%;background:#9AA9AB}
+.dot.open{background:#1FA36B;box-shadow:0 0 0 4px rgba(31,163,107,.18)}
+.today h2{font-size:26px;margin:14px 0 4px}
+.today .sub{color:var(--ink-soft);font-size:15px}
+.hours{margin:22px 0 0;border-top:1px solid var(--line)}
+.hours div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.hours div.is-today{font-weight:600}
+.hours dt{color:var(--ink-soft)} .hours div.is-today dt{color:var(--ink)}
+.offer{margin-top:22px;background:var(--sun);border-radius:14px;padding:16px 18px;font-size:15px;line-height:1.45}
+.offer strong{font-family:var(--display);font-size:22px;display:block;letter-spacing:-0.01em}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr;gap:40px}.hero{padding:48px 0 64px}}
+
+/* insurance */
+.ins{padding:36px 0;border-bottom:1px solid var(--line)}
+.ins .wrap{display:flex;align-items:center;gap:32px;flex-wrap:wrap}
+.ins p{font-weight:600;flex:none}
+.ins ul{display:flex;flex-wrap:wrap;gap:10px 12px;list-style:none}
+.ins li{border:1px solid var(--line);border-radius:22px;padding:7px 16px;font-size:15px;color:var(--ink-soft)}
+
+section{scroll-margin-top:80px}
+.sec{padding:96px 0}
+.sec-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:48px}
+.sec-head h2{font-size:clamp(32px,4vw,48px);max-width:14ch}
+.sec-head p{color:var(--ink-soft);max-width:46ch}
+@media (max-width:800px){.sec{padding:72px 0}.sec-head{grid-template-columns:1fr;gap:16px}}
+
+/* price list */
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:0 64px}
+.group h3{font-size:20px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin:0 0 4px}
+.group{margin-bottom:40px}
+.row{display:flex;align-items:baseline;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.row span:first-child{flex:1}
+.row small{display:block;color:var(--ink-soft);font-size:14px}
+.row b{font-weight:600;white-space:nowrap}
+.note{font-size:15px;color:var(--ink-soft);max-width:70ch}
+@media (max-width:800px){.prices{grid-template-columns:1fr}}
+
+/* membership */
+.member{background:var(--ink);color:#E6F2F1;border-radius:28px;padding:48px;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center}
+.member h2{color:#fff;font-size:clamp(28px,3.4vw,40px)}
+.member p{color:#B9D3D2;margin-top:14px;max-width:44ch}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plan{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:22px}
+.plan .amt{font-family:var(--display);font-size:40px;color:#fff;letter-spacing:-0.02em;line-height:1}
+.plan .amt small{font-size:16px;font-family:var(--body);color:#B9D3D2;letter-spacing:0}
+.plan p{margin-top:8px;font-size:15px}
+.member ul{grid-column:1/-1;list-style:none;display:flex;flex-wrap:wrap;gap:10px 28px;font-size:15px;border-top:1px solid rgba(255,255,255,.14);padding-top:24px}
+.member li::before{content:"✓";color:var(--sun);margin-right:8px;font-weight:700}
+@media (max-width:860px){.member{grid-template-columns:1fr;padding:32px 24px}}
+
+/* doctors */
+.docs{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.doc .mono{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:26px;margin-bottom:18px}
+.doc:nth-child(1) .mono{background:var(--aqua)}
+.doc:nth-child(2) .mono{background:#FBE6B0}
+.doc:nth-child(3) .mono{background:#DCE8F7}
+.doc h3{font-size:22px}
+.doc .role{color:var(--teal);font-weight:600;font-size:15px;margin:4px 0 10px}
+.doc p{color:var(--ink-soft);font-size:16px}
+@media (max-width:800px){.docs{grid-template-columns:1fr;gap:32px}}
+
+/* emergency */
+.emerg{background:var(--mist)}
+.emerg .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.emerg h2{font-size:clamp(32px,4vw,48px)}
+.emerg .big{font-family:var(--display);font-size:clamp(30px,3.6vw,42px);text-decoration:none;display:inline-block;margin:18px 0 6px;letter-spacing:-0.01em}
+.emerg ul{list-style:none}
+.emerg li{padding:14px 0;border-bottom:1px solid var(--line)}
+.emerg li:first-child{border-top:1px solid var(--line)}
+.warn{margin-top:20px;font-size:15px;color:var(--ink-soft);border-left:3px solid #D0584A;padding-left:14px}
+@media (max-width:800px){.emerg .wrap{grid-template-columns:1fr;gap:32px}}
+
+/* visit */
+.visit{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px}
+.visit h3{font-size:18px;margin-bottom:10px}
+.visit p,.visit li{color:var(--ink-soft);font-size:16px}
+.visit ul{list-style:none}
+@media (max-width:800px){.visit{grid-template-columns:1fr;gap:28px}}
+
+footer{border-top:1px solid var(--line);padding:32px 0 110px;font-size:14px;color:var(--ink-soft)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="demo">This is a demo clinic website for an AI support assistant. <button type="button" data-open-chat>Try the chat</button> — it answers from the clinic's own documents.</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Maple Grove Family Dental, home">
+      <svg width="34" height="34" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0F7C80"/><path d="M13 9c-2.5 0-4 2-4 5 0 4 2 10 4 10 1.6 0 1.8-5 3-5s1.4 5 3 5c2 0 4-6 4-10 0-3-1.5-5-4-5-1.2 0-1.8.6-3 .6S14.2 9 13 9z" fill="#fff"/></svg>
+      Maple Grove Dental
+    </a>
+    <ul>
+      <li><a href="#services">Services &amp; prices</a></li>
+      <li><a href="#insurance">Insurance</a></li>
+      <li><a href="#team">Our dentists</a></li>
+      <li><a href="#emergency">Emergencies</a></li>
+      <li><a href="#visit">Visit us</a></li>
+    </ul>
+    <a class="phone" href="tel:+15125550147">(512) 555-0147</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Dental care for the whole family in South Austin</h1>
+      <p class="lead">Checkups, cleanings, fillings, implants and same-day emergency visits. Three dentists, one friendly front desk, and no surprises on the bill.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="tel:+15125550147">Call to book a visit</a>
+        <button class="btn btn-ghost" type="button" data-open-chat>Ask a question</button>
+      </div>
+      <p class="langs">Hablamos español · Children seen from age 2</p>
+    </div>
+
+    <div>
+    <figure class="shot"><img src="photos/hero.jpg" alt="Treatment room at Maple Grove Family Dental" loading="eager" width="800" height="600"></figure>
+    <aside class="today" aria-label="Opening hours">
+      <div class="status"><span class="dot" id="dot"></span><span id="status">Checking hours…</span></div>
+      <h2 id="todayLine">Office hours</h2>
+      <p class="sub">4820 Maple Grove Blvd, Suite 110</p>
+      <dl class="hours" id="hours">
+        <div data-days="1,2,3,4"><dt>Mon – Thu</dt><dd>8:00 AM – 6:00 PM</dd></div>
+        <div data-days="5"><dt>Friday</dt><dd>8:00 AM – 3:00 PM</dd></div>
+        <div data-days="6"><dt>Saturday</dt><dd>9 AM – 1 PM, 1st &amp; 3rd</dd></div>
+        <div data-days="0"><dt>Sunday</dt><dd>Closed</dd></div>
+      </dl>
+      <div class="offer"><strong>$99 new patient visit</strong>Exam, full X-rays and cleaning for patients without insurance. Usually $285.</div>
+    </aside>
+    </div>
+  </div>
+</section>
+
+<section class="ins" id="insurance" aria-label="Insurance">
+  <div class="wrap">
+    <p>In network with</p>
+    <ul>
+      <li>Delta Dental PPO</li><li>Cigna Dental PPO</li><li>Aetna Dental PPO</li>
+      <li>MetLife PDP</li><li>Guardian Dental</li><li>United Concordia</li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Services and self-pay prices</h2>
+      <p>Prices for patients without insurance. Your dentist explains the cost of every treatment before it starts, and our front desk checks your insurance benefits in advance.</p>
+    </div>
+    <div class="prices">
+      <div>
+        <div class="group">
+          <h3>Checkups and cleanings</h3>
+          <div class="row"><span>Comprehensive exam and X-rays</span><b>$150</b></div>
+          <div class="row"><span>Routine cleaning<small>Children's cleaning $90</small></span><b>$120</b></div>
+          <div class="row"><span>Deep cleaning<small>Scaling and root planing, per quarter of the mouth</small></span><b>$220</b></div>
+          <div class="row"><span>Emergency visit<small>Exam and X-ray</small></span><b>$95</b></div>
+        </div>
+        <div class="group">
+          <h3>Cosmetic</h3>
+          <div class="row"><span>In-office teeth whitening</span><b>$450</b></div>
+          <div class="row"><span>Take-home whitening kit</span><b>$250</b></div>
+          <div class="row"><span>Clear aligners<small>Free consultation</small></span><b>from $4,500</b></div>
+        </div>
+      </div>
+      <div>
+        <div class="group">
+          <h3>Restorative</h3>
+          <div class="row"><span>Tooth-colored filling<small>Per tooth</small></span><b>from $160</b></div>
+          <div class="row"><span>Root canal<small>Front tooth $850</small></span><b>$1,250 molar</b></div>
+          <div class="row"><span>Porcelain crown<small>Per tooth</small></span><b>$1,200</b></div>
+          <div class="row"><span>Simple extraction<small>Surgical or wisdom tooth from $350</small></span><b>$180</b></div>
+          <div class="row"><span>Dental implant<small>Implant, abutment and crown. Free consultation first</small></span><b>from $3,900</b></div>
+        </div>
+        <p class="note">We accept cash, cards, HSA/FSA and Apple Pay. Treatments over $500 can be spread over 6 or 12 months at 0% through CareCredit, subject to approval.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" aria-label="Membership plan">
+  <div class="member">
+    <div>
+      <h2>No insurance? Join our membership plan</h2>
+      <p>One monthly fee covers your preventive care, and everything else costs 15% less. Seniors over 65 and veterans get 10% off self-pay treatment instead.</p>
+    </div>
+    <div class="plans">
+      <div class="plan"><div class="amt">$29<small> /month</small></div><p>Adults</p></div>
+      <div class="plan"><div class="amt">$19<small> /month</small></div><p>Children</p></div>
+    </div>
+    <ul>
+      <li>Two exams and cleanings a year</li><li>All routine X-rays</li><li>One emergency visit a year</li><li>15% off other treatment</li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec" id="team">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Meet our dentists</h2>
+      <p>Serving Austin families since 2012. Nervous about the dentist? Ask for laughing gas, noise-canceling headphones or a blanket — every room has them.</p>
+    </div>
+    <div class="docs">
+      <article class="doc"><div class="photo"><img src="photos/dr-carter.jpg" alt="Dr. Emily Carter" loading="lazy" width="400" height="400"></div><div class="mono" aria-hidden="true" hidden>EC</div><h3>Dr. Emily Carter, DDS</h3><p class="role">Lead dentist</p><p>General and cosmetic dentistry, 15 years of experience. Whitening and smile makeovers.</p></article>
+      <article class="doc"><div class="photo"><img src="photos/dr-reyes.jpg" alt="Dr. Daniel Reyes" loading="lazy" width="400" height="400"></div><div class="mono" aria-hidden="true" hidden>DR</div><h3>Dr. Daniel Reyes, DMD</h3><p class="role">Root canals and implants</p><p>General dentistry with a focus on saving teeth and replacing missing ones. Habla español.</p></article>
+      <article class="doc"><div class="photo"><img src="photos/dr-nair.jpg" alt="Dr. Priya Nair" loading="lazy" width="400" height="400"></div><div class="mono" aria-hidden="true" hidden>PN</div><h3>Dr. Priya Nair, DDS</h3><p class="role">Children and families</p><p>Sees kids from age 2. Parents are welcome to stay in the room for the whole visit.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="sec emerg" id="emergency">
+  <div class="wrap">
+    <div>
+      <h2>Tooth emergency? We'll see you today</h2>
+      <p style="margin-top:14px;color:var(--ink-soft);max-width:44ch">Same-day appointments Monday to Saturday during office hours. After hours, call the same number to reach the on-call dentist.</p>
+      <a class="big" href="tel:+15125550147">(512) 555-0147</a>
+    </div>
+    <div>
+      <ul>
+        <li>Severe tooth pain or swelling</li>
+        <li>Broken, chipped or knocked-out tooth — keep a knocked-out tooth in milk and come in within 60 minutes</li>
+        <li>Lost filling or crown</li>
+        <li>Bleeding that won't stop</li>
+      </ul>
+      <p class="warn">Facial swelling with fever, or trouble breathing or swallowing: go to the nearest emergency room or call 911.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="visit">
+  <div class="wrap">
+    <div class="sec-head"><h2>Visit us</h2><p>Free parking in front of the building, including accessible spaces. The clinic is on the ground floor.</p></div>
+    <div class="visit">
+      <div><h3>Address</h3><p>4820 Maple Grove Blvd, Suite 110<br>Austin, TX 78745</p></div>
+      <div><h3>Contact</h3><ul><li><a href="tel:+15125550147">(512) 555-0147</a></li><li>hello@maplegrovedental.example</li></ul></div>
+      <div><h3>First visit</h3><p>Arrive 15 minutes early with a photo ID, your insurance card and a list of your medications. Please give 24 hours' notice to reschedule.</p></div>
+    </div>
+    <figure class="office"><img src="photos/office.jpg" alt="Reception area of the clinic" loading="lazy" width="1400" height="600"></figure>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Maple Grove Family Dental is a fictional clinic. Phone numbers and email are placeholders.</span>
+    <span>AI assistant demo by Shumkar.</span>
+  </div>
+</footer>
+
+<script>
+/* live "open now" status in Austin time */
+(function(){
+  const sched={0:null,1:[8,18],2:[8,18],3:[8,18],4:[8,18],5:[8,15],6:[9,13]};
+  const fmt=h=>{const s=h>=12?'PM':'AM';const x=h%12||12;return x+':00 '+s};
+  const now=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Chicago'}));
+  const d=now.getDay(), h=now.getHours()+now.getMinutes()/60;
+  const satOpen=d!==6 || [1,3].includes(Math.ceil(now.getDate()/7));
+  const today=sched[d] && satOpen ? sched[d] : null;
+  const open=today && h>=today[0] && h<today[1];
+  document.getElementById('dot').classList.toggle('open',!!open);
+  document.getElementById('status').textContent=open?'Open now':'Closed now';
+  document.getElementById('todayLine').textContent= open ? 'Open today until '+fmt(today[1])
+    : (today && h<today[0] ? 'Opens today at '+fmt(today[0]) : 'Office hours');
+  document.querySelectorAll('#hours div').forEach(r=>{ if(r.dataset.days.split(',').includes(String(d))) r.classList.add('is-today'); });
+})();
+</script>
+
+<script>
+document.querySelectorAll('.shot img,.office img,.doc .photo img').forEach(img=>{
+  img.addEventListener('error',()=>{
+    const box=img.parentElement;
+    const mono=box.parentElement.querySelector('.mono');
+    box.remove();
+    if(mono) mono.hidden=false;
+  });
+});
+</script>
+
+<script type="module">
+import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+createChat({
+  webhookUrl: 'https://ernestn8n.duckdns.org/webhook/7f3c2a10-5b6d-4e8f-a1b2-c3d4e5f6a7b8/chat',
+  mode: 'window',
+  showWelcomeScreen: false,
+  loadPreviousSession: false,
+  initialMessages: [
+    "Hi! 👋 I'm the virtual assistant of Maple Grove Family Dental.",
+    "Ask me about insurance, prices, office hours or emergency visits."
+  ],
+  i18n: { en: {
+    title: 'Maple Grove Family Dental',
+    subtitle: 'Usually answers in a few seconds',
+    footer: '',
+    getStarted: 'New conversation',
+    inputPlaceholder: 'Type your question…',
+  }},
+});
+document.querySelectorAll('[data-open-chat]').forEach(b=>b.addEventListener('click',()=>{
+  const t=document.querySelector('.chat-window-toggle');
+  const w=document.querySelector('.chat-window');
+  if(t && !(w && w.offsetParent)) t.click();
+}));
+</script>
+</body>
+</html>
